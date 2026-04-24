@@ -1,0 +1,12 @@
+# [GET] Get Static Data
+/common/static-data:
+    get:
+        tags:
+            - Common
+        summary: Get static data (no authorization required)
+        responses:
+            200:
+                description: 'Successfully retrieved static data'
+            500:
+                description: 'Internal server error'
+        # no `security` block → route is public

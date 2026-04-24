@@ -1,0 +1,2 @@
+-- MATRIMONY APP DATABASE SCHEMA (v2 with caste_hierarchy)
+-- (Full schema text from user should be placed here unchanged)
