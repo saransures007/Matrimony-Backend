@@ -113,6 +113,13 @@ export interface ISect {
   SORTBY: number;
 }
 
+export interface IKulam {
+  label: string;
+  value: string;
+  parent: string;
+  SORTBY: number;
+}
+
 export interface IHobby {
   label: string;
   value: string;
@@ -139,6 +146,7 @@ export interface IStaticDataResponse {
   casteGroup: ICaste[];
   caste: ICaste[];
   subcaste: ISubCaste[];
+  kulam: IKulam[];
   religion: IReligion[];
   sect: ISect[];
   hobby: IHobby[];

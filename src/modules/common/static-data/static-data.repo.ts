@@ -11,6 +11,7 @@ import {
   IOccupation,
   ICaste,
   ISubCaste,
+  IKulam,
   IReligion,
   ISect,
   IHobby,
@@ -31,6 +32,7 @@ export interface IStaticDataRepo {
   getCasteGroups(): Promise<ICaste[]>;
   getCastes(): Promise<ICaste[]>;
   getSubCastes(): Promise<ISubCaste[]>;
+  getKulams(): Promise<IKulam[]>;
   getReligions(): Promise<IReligion[]>;
   getSects(): Promise<ISect[]>;
   getHobbies(): Promise<IHobby[]>;
@@ -278,6 +280,21 @@ getSects: async (): Promise<ISect[]> => {
 
 
 
+
+  getKulams: async (): Promise<IKulam[]> => {
+    const kulams = await DB.caste_hierarchy.findAll({
+      where: { level: 'Kulam' },
+      order: [['sortby', 'ASC']],
+    });
+
+    console.log("kulams",kulams)
+    return kulams.map((row: any) => ({
+      label: row.name,
+      value: row.id.toString(),
+      parent: row.parent_id?.toString() ?? '', // parent subcaste id
+      SORTBY: row.sortby ?? 0,
+    }));
+  },
 
   getReligions: async () => {
     const data = await DB.religion_lookup.findAll();

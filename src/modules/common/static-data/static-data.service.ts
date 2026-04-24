@@ -15,6 +15,7 @@ export const getStaticDataService = async (): Promise<IStaticDataResponse> => {
     casteGroup: await repo.getCasteGroups(),
     caste: await repo.getCastes(),
     subcaste: await repo.getSubCastes(),
+    kulam: await repo.getKulams(),
     religion: await repo.getReligions(),
     sect: await repo.getSects(),
     hobby: await repo.getHobbies(),
