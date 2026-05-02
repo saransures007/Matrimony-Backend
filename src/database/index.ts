@@ -19,11 +19,16 @@ import OccupationCategoryModel from './models/lookupModels/occupation-category.m
 import EducationCategoryModel from './models/lookupModels/education-category.model'; 
 import CasteHierarchyModel from './models/lookupModels/caste_hierarchy.model';
 import StateCasteReservationMappingModel from './models/lookupModels/state_caste_reservation_mapping.model';
+import MatrimonyModeModel from './models/lookupModels/matrimony-mode.model';
 import Accounts from './models/profile/account.model';
 import AccountRolesModel from './models/profile/account_roles.model';
 import RolesModel from './models/profile/roles.model';
 import profileModel from './models/profile/profiles.model';
-import otpVerificationModel from './models/profile/otp_verification.model';
+import profilePictureModel from './models/profile/profile_picture.model';
+import otpVerificationModel, { OtpVerificationModel } from './models/profile/otp_verification.model';
+import profileLikeModel from './models/matches/profile_like.model';
+import matchModel from './models/matches/match.model';
+import swipeHistoryModel from './models/matches/swipe_history.model';
 import {
   DB_DIALECT,
   DB_HOST,
@@ -60,6 +65,7 @@ const sequelize = new Sequelize.Sequelize(
 );
 
 sequelize.authenticate();
+
 const OccupationCategory = OccupationCategoryModel(sequelize);
 const OccupationRole = OccupationRoleModel(sequelize);
 
@@ -86,7 +92,11 @@ export const DB = {
   account_roles: AccountRolesModel(sequelize),
   roles: RolesModel(sequelize),
   profiles: profileModel(sequelize),
+  profile_picture: profilePictureModel(sequelize),
   otp_verification: otpVerificationModel(sequelize),
+  profile_likes: profileLikeModel(sequelize),
+  matches: matchModel(sequelize),
+  swipe_history: swipeHistoryModel(sequelize),
   // profiles: profileModel(sequelize),
   // Users: userModel(sequelize),
   mother_tongue: MotherTongueModel(sequelize),
@@ -114,6 +124,9 @@ export const DB = {
     // ✅ Caste-related models
   caste_hierarchy: CasteHierarchy,
   state_caste_reservation_mapping: StateCasteReservationMapping,
+
+  // ✅ Matrimony mode
+  matrimony_modes: MatrimonyModeModel(sequelize),
 
   sequelize, // connection instance (RAW queries)
   Sequelize, // library

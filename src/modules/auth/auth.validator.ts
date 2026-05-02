@@ -29,4 +29,5 @@ export const registerValidator = Joi.object({
     employedInId: Joi.number().optional(),
     expectedSalaryId: Joi.number().optional(),
     aboutMe: Joi.string().optional(),
+    matrimonyModeId: Joi.number().optional(),
 }).options(options);

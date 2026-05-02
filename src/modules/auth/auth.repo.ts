@@ -9,9 +9,12 @@ export interface IAuthRepo {
   getAccountByEmail(email: string): Promise<IAccount | null>;
   getAccountByPhone(phone: string): Promise<IAccount | null>;
   getAccountByUsername(username: string): Promise<IAccount | null>;
+  checkEmailExists(email: string): Promise<boolean>;
+  checkPhoneExists(phone: string): Promise<boolean>;
   verifyPassword(accountId: string, password: string): Promise<boolean>;
-  storeOTP(accountId: string, otp: string, type: OTPType, expiresAt: Date, t?: any): Promise<void>;
+  storeOTP(accountId: string, phoneNumber: string, otp: string, type: OTPType, expiresAt: Date, t?: any): Promise<void>;
   verifyOTP(accountId: string, otp: string, type: OTPType, t?: any): Promise<boolean>;
+  verifyOTPByPhone(phoneNumber: string, otp: string, type: OTPType, t?: any): Promise<boolean>;
 }
 
 export const authRepo: IAuthRepo = {
@@ -86,7 +89,13 @@ export const authRepo: IAuthRepo = {
   getAccountByPhone: async (phone: string): Promise<IAccount | null> => {
     const account = await DB.accounts.findOne({
       where: { primaryPhone: phone },
-      include: [{ model: DB.roles, through: { attributes: [] } }],
+      include: [
+        {
+          model: DB.roles,
+          as: 'roles',   // 👈 REQUIRED
+          through: { attributes: [] }
+        }
+      ]
     });
     if (!account) return null;
 
@@ -98,6 +107,16 @@ export const authRepo: IAuthRepo = {
       isActive: account.isActive,
       roles: account.roles?.map((r: any) => r.name as RoleType) ?? [],
     };
+  },
+
+  checkEmailExists: async (email: string): Promise<boolean> => {
+    const account = await DB.accounts.findOne({ where: { primaryEmail: email } });
+    return account !== null;
+  },
+
+  checkPhoneExists: async (phone: string): Promise<boolean> => {
+    const account = await DB.accounts.findOne({ where: { primaryPhone: phone } });
+    return account !== null;
   },
 
   getAccountByUsername: async (username: string): Promise<IAccount | null> => {
@@ -123,8 +142,8 @@ export const authRepo: IAuthRepo = {
     return bcrypt.compare(password, account.passwordHash);
   },
 
-  storeOTP: async (accountId: string, otp: string, type: OTPType, expiresAt: Date, t?: any) => {
-    await DB.otp_verification.create({ accountId, otpCode: otp, type, isUsed: false, expiresAt }, { transaction: t });
+  storeOTP: async (accountId: string, phoneNumber: string, otp: string, type: OTPType, expiresAt: Date, t?: any) => {
+    await DB.otp_verification.create({ accountId, phoneNumber, otpCode: otp, type, isUsed: false, attemptCount: 0, expiresAt }, { transaction: t });
   },
 
   verifyOTP: async (accountId: string, otp: string, type: OTPType, t?: any): Promise<boolean> => {
@@ -134,6 +153,20 @@ export const authRepo: IAuthRepo = {
     });
     if (!otpRecord) return false;
     if (new Date() > otpRecord.expiresAt) return false;
+    await otpRecord.update({ isUsed: true }, { transaction: t });
+    return true;
+  },
+
+  verifyOTPByPhone: async (phoneNumber: string, otp: string, type: OTPType, t?: any): Promise<boolean> => {
+    const otpRecord = await DB.otp_verification.findOne({
+      where: { phoneNumber, otpCode: otp, type, isUsed: false },
+      transaction: t,
+    });
+    if (!otpRecord) return false;
+    if (new Date() > otpRecord.expiresAt) return false;
+    
+    // Increment attempt count
+    await otpRecord.increment('attemptCount', { transaction: t });
     await otpRecord.update({ isUsed: true }, { transaction: t });
     return true;
   },

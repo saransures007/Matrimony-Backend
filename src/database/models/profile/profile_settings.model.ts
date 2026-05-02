@@ -9,6 +9,7 @@ export interface IProfileSettings {
   timezone?: string;
   languagePref?: string;
   preferences?: object;
+  modePreferences?: object;
 }
 
 export class ProfileSettingsModel extends Model<IProfileSettings> implements IProfileSettings {
@@ -20,6 +21,7 @@ export class ProfileSettingsModel extends Model<IProfileSettings> implements IPr
   public timezone?: string;
   public languagePref?: string;
   public preferences?: object;
+  public modePreferences?: object;
 }
 
 export default function (sequelize: Sequelize): typeof ProfileSettingsModel {
@@ -33,6 +35,7 @@ export default function (sequelize: Sequelize): typeof ProfileSettingsModel {
       timezone: { type: DataTypes.STRING(100) },
       languagePref: { type: DataTypes.STRING(50) },
       preferences: { type: DataTypes.JSON },
+      modePreferences: { type: DataTypes.JSON, field: 'mode_preferences' },
     },
     { sequelize, tableName: 'profile_settings', timestamps: false }
   );

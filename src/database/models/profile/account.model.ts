@@ -61,5 +61,8 @@ export default function (sequelize: Sequelize): typeof AccountModel {
     }
   );
 
+
+  
+
   return AccountModel;
 }

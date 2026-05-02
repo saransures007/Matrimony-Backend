@@ -12,6 +12,12 @@ export const {
     TWILIO_AUTH_TOKEN,
     SMS_SECRET_TOKEN,
     JWT_REFRESH_TOKEN_SECRET,
+    R2_ACCOUNT_ID,
+    R2_ACCESS_KEY_ID,
+    R2_SECRET_ACCESS_KEY,
+    R2_BUCKET,
+    R2_PUBLIC_BASE_URL,
+    REDIS_URL,
 } = process.env;
 
 export const {

@@ -16,6 +16,7 @@ import {
   ISect,
   IHobby,
   IWellKnownCollege,
+  IMatrimonyMode,
 } from './static-data.interfaces';
 
 // Define interface for repo
@@ -41,6 +42,7 @@ export interface IStaticDataRepo {
   getOccupationGrouping(): Promise<{ label: string; value: string; onTop: number; SORTBY: number }[]>;
   getEmployedInOccMapping(): Promise<{ value: string; data: string[] }[]>;
   getTopCityIndia(): Promise<{ ID: string; VALUE: string; LABEL: string; SORTBY: number }[]>;
+  getMatrimonyModes(): Promise<IMatrimonyMode[]>;
 }
 
 // Implement repo
@@ -375,4 +377,20 @@ getEmployedInOccMapping: async () => {
       SORTBY: row.sortby ?? 0,
     }));
   },
+
+getMatrimonyModes: async () => {
+  const data = await DB.matrimony_modes.findAll({
+    where: { is_active: true }, // Now using snake_case
+    order: [['sort_order', 'ASC']], // Now using snake_case
+  });
+  
+  return data.map((row: any) => ({
+    id: row.id,
+    name: row.name ?? '',
+    displayName: row.display_name ?? row.name ?? '', // Map to camelCase for frontend
+    description: row.description ?? '',
+    isActive: row.is_active ?? true, // Map to camelCase for frontend
+    sortOrder: row.sort_order ?? 0, // Map to camelCase for frontend
+  }));
+},
 };

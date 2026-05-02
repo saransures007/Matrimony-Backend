@@ -1,11 +1,14 @@
 import express from 'express';
 import cors from 'cors';
+import http from 'http';
+import rateLimit from 'express-rate-limit';
 import router from '@routes/routes';
 import logger from '@utils/logger';
 import { DB } from '@database/index';
 import { PORT } from './config';
 import { errorHandler } from './utils/error-handler';
 import { swaggerSpec, swaggerUi } from './utils/swagger';
+import { initRealtime } from './modules/realtime/realtime.service';
 
 const app = express();
 const port = PORT;
@@ -17,6 +20,13 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
+app.use(rateLimit({
+  windowMs: 60 * 1000,
+  limit: 240,
+  standardHeaders: true,
+  legacyHeaders: false,
+}));
 
 
 // Logging middleware
@@ -60,9 +70,11 @@ app.use(errorHandler);
 // DB connect & start server
 DB.sequelize
   .authenticate()
-  .then(() => {
+  .then(async () => {
     logger.info('Database connected successfully!');
-    app.listen(port, () => {
+    const server = http.createServer(app);
+    await initRealtime(server);
+    server.listen(port, () => {
       logger.info(`Server running at http://localhost:${port}`);
     });
   })

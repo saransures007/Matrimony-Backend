@@ -133,6 +133,15 @@ export interface IWellKnownCollege {
   SORTBY: number;
 }
 
+export interface IMatrimonyMode {
+  id: number;
+  name: string;
+  displayName: string;
+  description?: string;
+  isActive: boolean;
+  sortOrder: number;
+}
+
 export interface IStaticDataResponse {
   mtongue: IMotherTongue[];
   country: ICountry[];
@@ -155,4 +164,5 @@ export interface IStaticDataResponse {
   occupation_grouping: { label: string; value: string; onTop: number; SORTBY: number }[];
   employedInOccMapping: { value: string; data: string[] }[];
   topCityIndia: { ID: string; VALUE: string; LABEL: string; SORTBY: number }[];
+  matrimonyModes: IMatrimonyMode[];
 }

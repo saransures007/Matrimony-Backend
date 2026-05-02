@@ -24,5 +24,6 @@ export const getStaticDataService = async (): Promise<IStaticDataResponse> => {
     occupation_grouping: await repo.getOccupationGrouping(),
     employedInOccMapping: await repo.getEmployedInOccMapping(),
     topCityIndia: await repo.getTopCityIndia(),
+    matrimonyModes: await repo.getMatrimonyModes(),
   };
 };

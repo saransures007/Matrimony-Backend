@@ -3,7 +3,7 @@ import { Request } from 'express';
 export type RoleType = 'USER' | 'ADMIN' | 'STAFF';
 
 
-export type OTPType = 'PhoneVerification' | 'PasswordReset' | '2FA';
+export type OTPType = 'PhoneVerification' | 'PasswordReset' | 'TwoFA' | 'Login';
 
 export interface IAccountCreation {
   email?: string;
@@ -36,6 +36,7 @@ export interface IProfileCreation {
   employedInId?: number;
   expectedSalaryId?: number;
   aboutMe?: string;
+  matrimonyModeId?: number;
 }
 
 export interface IAccount {

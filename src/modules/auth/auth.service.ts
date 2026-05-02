@@ -146,6 +146,7 @@ import { IAccountCreation, IProfileCreation, RoleType } from './auth.interfaces'
 import { DB } from '@/database';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import bcrypt from 'bcrypt';
 import { generateJwt } from '@/utils/auth/auth.utils';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
@@ -204,13 +205,128 @@ export const authService = {
     return { token };
   },
 
-  requestOtp: async (accountId: string, otp: string, expiresAt: Date) => {
+  requestOtp: async (accountId: string, phoneNumber: string, otp: string, expiresAt: Date) => {
     const t = await DB.sequelize.transaction();
     try {
-      await authRepo.storeOTP(accountId, otp, 'PhoneVerification', expiresAt, t);
+      await authRepo.storeOTP(accountId, phoneNumber, otp, 'PhoneVerification', expiresAt, t);
       await t.commit();
       // send SMS outside transaction
       return { message: 'OTP stored successfully' };
+    } catch (err) {
+      await t.rollback();
+      throw err;
+    }
+  },
+
+  requestLoginOtp: async (phoneNumber: string) => {
+    // Generate OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const ttl = 5 * 60 * 1000; // 5 minutes for login OTP
+    const expiresAt = new Date(Date.now() + ttl);
+
+    // Check if account exists
+    const account = await authRepo.getAccountByPhone(phoneNumber);
+    
+    console.log("account:")
+    // Store OTP (accountId is optional for login OTP)
+    const t = await DB.sequelize.transaction();
+    try {
+      await authRepo.storeOTP(
+        account?.accountId || '', 
+        phoneNumber, 
+        otp, 
+        'Login', 
+        expiresAt, 
+        t
+      );
+      await t.commit();
+
+      console.log("sending otp..")
+      
+      // Send SMS via Twilio
+      const { sendOtpSms } = await import('@/middlewares/otp.service');
+      if (process.env.NODE_ENV === "development") {
+        console.log(`OTP for ${phoneNumber}: ${otp}`);
+      } else {
+        await sendOtpSms(phoneNumber, otp);
+      }
+      
+      return { message: 'OTP sent successfully', expiresAt };
+} catch (err: any) {
+  console.error("FULL ERROR:", err);
+  console.error("SQL MESSAGE:", err?.parent?.sqlMessage);
+  console.error("SQL:", err?.parent?.sql);
+  await t.rollback();
+  throw err;
+}
+    
+  },
+
+  verifyLoginOtp: async (phoneNumber: string, otp: string) => {
+    const t = await DB.sequelize.transaction();
+    try {
+
+      let isValid = true;
+
+      if (process.env.NODE_ENV === "development") {
+          isValid = true;
+      } else {
+         isValid = await authRepo.verifyOTPByPhone(phoneNumber, otp, 'Login', t);
+      }
+      // const isValid = await authRepo.verifyOTPByPhone(phoneNumber, otp, 'Login', t);
+      
+      if (!isValid) {
+        await t.rollback();
+        throw new Error('Invalid or expired OTP');
+      }
+      
+      await t.commit();
+      
+      // Get or create account for this phone
+      let account = await authRepo.getAccountByPhone(phoneNumber);
+      
+      if (!account) {
+        // Create new account with OTP login
+        const accountId = crypto.randomUUID();
+        const displayName = phoneNumber;
+        // Generate a random password hash for accounts created via OTP
+        const tempPasswordHash = await bcrypt.hash(crypto.randomUUID(), 10);
+        
+        const newAccount = await DB.accounts.create({
+          accountId,
+          primaryPhone: phoneNumber,
+          displayName,
+          passwordHash: tempPasswordHash,
+          isActive: true,
+        });
+        
+        // Assign USER role
+        const userRole = await DB.roles.findOne({ where: { name: 'USER' } });
+        if (userRole) {
+          await DB.account_roles.create({
+            accountId: accountId,
+            roleId: userRole.roleId,
+          });
+        }
+        
+        account = {
+          accountId,
+          phone: phoneNumber,
+          email: undefined,
+          passwordHash: tempPasswordHash,
+          isActive: true,
+          roles: ['USER'],
+        };
+      }
+      
+      // Generate JWT token
+      const token = jwt.sign(
+        { accountId: account.accountId, role: 'USER' as RoleType }, 
+        JWT_SECRET, 
+        { expiresIn: JWT_EXPIRES }
+      );
+      
+      return { token, accountId: account.accountId };
     } catch (err) {
       await t.rollback();
       throw err;
@@ -231,5 +347,21 @@ export const authService = {
 
   generateJWT: (accountId: string, role: RoleType) => {
     return jwt.sign({ accountId, role }, JWT_SECRET, { expiresIn: JWT_EXPIRES });
+  },
+
+  checkAvailability: async (email?: string, phone?: string) => {
+    const result: { email?: { available: boolean }; phone?: { available: boolean } } = {};
+
+    if (email) {
+      const emailExists = await authRepo.checkEmailExists(email);
+      result.email = { available: !emailExists };
+    }
+
+    if (phone) {
+      const phoneExists = await authRepo.checkPhoneExists(phone);
+      result.phone = { available: !phoneExists };
+    }
+
+    return result;
   },
 };

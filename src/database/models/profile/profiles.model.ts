@@ -24,6 +24,8 @@ export interface IProfile {
   employedInId?: number;
   expectedSalaryId?: number;
   aboutMe?: string;
+  matrimonyModeId?: number;
+  modeSelectedAt?: Date;
   profileStatus: 'Active' | 'Inactive';
   isSearchable: boolean;
   visibility: 'Public' | 'Private';
@@ -50,6 +52,8 @@ export type ProfileCreationAttributes = Optional<
   | 'employedInId'
   | 'expectedSalaryId'
   | 'aboutMe'
+  | 'matrimonyModeId'
+  | 'modeSelectedAt'
   | 'profileStatus'
   | 'isSearchable'
   | 'visibility'
@@ -81,6 +85,8 @@ export class ProfileModel extends Model<IProfile, ProfileCreationAttributes> imp
   public employedInId?: number;
   public expectedSalaryId?: number;
   public aboutMe?: string;
+  public matrimonyModeId?: number;
+  public modeSelectedAt?: Date;
   public profileStatus!: 'Active' | 'Inactive';
   public isSearchable!: boolean;
   public visibility!: 'Public' | 'Private';
@@ -113,7 +119,9 @@ export default function (sequelize: Sequelize): typeof ProfileModel {
       occupationRoleId: { type: DataTypes.INTEGER, field: 'occupation_role_id' },
       employedInId: { type: DataTypes.INTEGER, field: 'employedin_id' },
       expectedSalaryId: { type: DataTypes.INTEGER, field: 'expected_salary_id' },
-      aboutMe: { type: DataTypes.TEXT },
+      aboutMe: { type: DataTypes.TEXT, field: 'about_me' },
+      matrimonyModeId: { type: DataTypes.INTEGER, allowNull: true, field: 'matrimony_mode_id' },
+      modeSelectedAt: { type: DataTypes.DATE, allowNull: true, field: 'mode_selected_at' },
       profileStatus: { type: DataTypes.ENUM('Active', 'Inactive'), defaultValue: 'Active', field: 'profile_status' },
       isSearchable: { type: DataTypes.BOOLEAN, defaultValue: true, field: 'is_searchable' },
       visibility: { type: DataTypes.ENUM('Public', 'Private'), defaultValue: 'Public' },
