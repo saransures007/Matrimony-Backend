@@ -6,11 +6,12 @@ export const getMatchesController = async (
   req: IAuthRequest,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   try {
     const accountId = req.account?.accountId;
     if (!accountId) {
-      return res.status(401).json({ message: 'Unauthorized' });
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
     }
 
     const matches = await matchesService.getMatchesForUser(accountId);

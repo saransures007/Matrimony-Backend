@@ -10,10 +10,10 @@ export interface IOccupationGrouping {
 export type OccupationGroupingCreationAttributes = Optional<IOccupationGrouping, 'id' | 'sortby' | 'on_top'>;
 
 export class OccupationGroupingModel extends Model<IOccupationGrouping, OccupationGroupingCreationAttributes> implements IOccupationGrouping {
-  public id!: number;
-  public label!: string;
-  public on_top!: number;
-  public sortby!: number;
+  declare id: number;
+  declare label: string;
+  declare on_top: number;
+  declare sortby: number;
 }
 
 export default function (sequelize: Sequelize): typeof OccupationGroupingModel {

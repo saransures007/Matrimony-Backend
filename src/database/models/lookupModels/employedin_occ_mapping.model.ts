@@ -7,8 +7,8 @@ export interface IEmployedInOccMapping {
 export type EmployedInOccMappingCreationAttributes = IEmployedInOccMapping;
 
 export class EmployedInOccMappingModel extends Model<IEmployedInOccMapping, EmployedInOccMappingCreationAttributes> implements IEmployedInOccMapping {
-  public employedin_id!: number;
-  public role_id!: number;
+  declare employedin_id: number;
+  declare role_id: number;
 }
 
 export default function (sequelize: Sequelize): typeof EmployedInOccMappingModel {

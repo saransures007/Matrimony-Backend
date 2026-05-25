@@ -10,10 +10,10 @@ export interface IEmployedIn {
 export type EmployedInCreationAttributes = Optional<IEmployedIn, 'id' | 'sortby'>;
 
 export class EmployedInModel extends Model<IEmployedIn, EmployedInCreationAttributes> implements IEmployedIn {
-  public id!: number;
-  public label!: string;
-  public show_field!: string;
-  public sortby!: number;
+  declare id: number;
+  declare label: string;
+  declare show_field: string;
+  declare sortby: number;
 }
 
 export default function (sequelize: Sequelize): typeof EmployedInModel {

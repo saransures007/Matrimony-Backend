@@ -6,8 +6,8 @@ export interface ICountryWithStates {
 }
 
 export class CountryWithStatesModel extends Model<ICountryWithStates> implements ICountryWithStates {
-  public country_id!: number;
-  public state_id!: number;
+  declare country_id: number;
+  declare state_id: number;
 }
 
 export default function (sequelize: Sequelize): typeof CountryWithStatesModel {

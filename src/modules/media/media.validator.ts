@@ -4,7 +4,7 @@ export const presignProfilePicturesSchema = z.object({
   files: z.array(
     z.object({
       fileName: z.string().min(1).max(180),
-      contentType: z.enum(['image/jpeg', 'image/png', 'image/webp']),
+      contentType: z.enum(['image/jpeg', 'image/jpg', 'image/png', 'image/webp']),
       sizeBytes: z.number().int().positive().max(8 * 1024 * 1024),
       sortOrder: z.number().int().min(0).max(20).optional(),
       isProfilePic: z.boolean().optional(),
@@ -18,7 +18,7 @@ export const completeProfilePicturesSchema = z.object({
       uploadId: z.string().uuid(),
       storageKey: z.string().min(10).max(700),
       fileName: z.string().min(1).max(180),
-      contentType: z.enum(['image/jpeg', 'image/png', 'image/webp']),
+      contentType: z.enum(['image/jpeg', 'image/jpg', 'image/png', 'image/webp']),
       sizeBytes: z.number().int().positive().max(8 * 1024 * 1024),
       publicUrl: z.string().url(),
       sortOrder: z.number().int().min(0).max(20).default(0),

@@ -1,47 +1,123 @@
-# [POST] signup
-/auth/signup:
-    post:
-        tags:
-            - Auth
-        summary: Sign Up
-        requestBody:
-            description: Sign Up
-            required: true
-            content: 
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/signup'
-        responses: 
-            201:
-                description: 'OK'
-            400: 
-                description: 'Bad Request'
-            409: 
-                description: 'Conflict'
-            500:
-                description: 'Internal server error'
+# Auth API Documentation
 
-# [POST] signin
-/auth/signin:
+paths:
+  /api/v1/auth/register:
     post:
-        tags:
-            - Auth
-        summary: Sign In
-        requestBody:
-            description: Sign In
-            required: true
-            content: 
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/signin'
-        responses: 
-            201:
-                description: 'OK'
-            400: 
-                description: 'Bad Request'
-            401:
-                description: 'Unauthorized'
-            409: 
-                description: 'Conflict'
-            500:
-                description: 'Internal server error'
+      tags: [Auth]
+      summary: Register a new user account
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [account, profile]
+              properties:
+                account:
+                  type: object
+                  required: [email, password]
+                  properties:
+                    email: { type: string, format: email }
+                    phone: { type: string }
+                    password: { type: string, minLength: 8 }
+                    displayName: { type: string }
+                    roles: { type: array, items: { type: string }, default: ["USER"] }
+                profile:
+                  type: object
+                  required: [fullname, profileCreatedFor, dateOfBirth, gender, maritalStatus]
+      responses:
+        201:
+          description: Account created successfully
+
+  /api/v1/auth/login/password:
+    post:
+      tags: [Auth]
+      summary: Login with email/phone + password
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [identifier, password]
+              properties:
+                identifier: { type: string }
+                password: { type: string }
+                role: { type: string, default: "USER" }
+      responses:
+        200:
+          description: Login successful
+
+  /api/v1/auth/login/otp:
+    post:
+      tags: [Auth]
+      summary: Login with phone + OTP
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone, otp]
+              properties:
+                phone: { type: string }
+                otp: { type: string }
+      responses:
+        200:
+          description: OTP verified, login successful
+
+  /api/v1/auth/otp/request:
+    post:
+      tags: [Auth]
+      summary: Request OTP for login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone]
+              properties:
+                phone: { type: string }
+      responses:
+        200:
+          description: OTP sent successfully
+
+  /api/v1/auth/otp/verify:
+    post:
+      tags: [Auth]
+      summary: Verify OTP and complete login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone, otp]
+              properties:
+                phone: { type: string }
+                otp: { type: string }
+      responses:
+        200:
+          description: Login successful
+
+  /api/v1/auth/check-availability:
+    get:
+      tags: [Auth]
+      summary: Check if email or phone is already registered
+      security: []
+      parameters:
+        - in: query
+          name: email
+          schema: { type: string, format: email }
+        - in: query
+          name: phone
+          schema: { type: string }
+      responses:
+        200:
+          description: Availability status

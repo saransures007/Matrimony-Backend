@@ -22,16 +22,16 @@ export type OtpVerificationCreationAttributes = Optional<
 
 export class OtpVerificationModel extends Model<IOtpVerification, OtpVerificationCreationAttributes>
   implements IOtpVerification {
-  public otpId!: string;
+  declare otpId: string;
   public accountId?: string;
-  public phoneNumber!: string;
-  public otpCode!: string;
-  public type!: OTPType;
-  public isUsed!: boolean;
-  public attemptCount!: number;
-  public expiresAt!: Date;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare phoneNumber: string;
+  declare otpCode: string;
+  declare type: OTPType;
+  declare isUsed: boolean;
+  declare attemptCount: number;
+  declare expiresAt: Date;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 }
 
 export default function (sequelize: Sequelize): typeof OtpVerificationModel {

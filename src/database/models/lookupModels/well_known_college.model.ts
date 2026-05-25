@@ -9,9 +9,9 @@ export interface IWellKnownCollege {
 export type WellKnownCollegeCreationAttributes = Optional<IWellKnownCollege, 'id' | 'sortby'>;
 
 export class WellKnownCollegeModel extends Model<IWellKnownCollege, WellKnownCollegeCreationAttributes> implements IWellKnownCollege {
-  public id!: number;
-  public label!: string;
-  public sortby!: number;
+  declare id: number;
+  declare label: string;
+  declare sortby: number;
 }
 
 export default function (sequelize: Sequelize): typeof WellKnownCollegeModel {

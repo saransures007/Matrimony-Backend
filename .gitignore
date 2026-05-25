@@ -6,6 +6,13 @@ node_modules/
 
 # Build output
 dist/
+coverage/
+
+# Generated archives / reports
+src.zip
+lib.zip
+checkpoints/
+plans/
 
 # Logs
 logs/
@@ -14,3 +21,6 @@ src/logs/
 
 # macOS
 .DS_Store
+src/.DS_Store
+*.DS_Store
+tsconfig copy.json

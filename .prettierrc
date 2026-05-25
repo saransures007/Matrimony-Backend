@@ -1,0 +1,49 @@
+/**
+ * Prettier Configuration
+ * Enforces consistent formatting across all TypeScript files
+ * Run: npx prettier --write "src/**/*.ts"
+ */
+
+module.exports = {
+  // Language options
+  trailingComma: 'es5',
+  tabWidth: 2,
+  semi: true,
+  singleQuote: true,
+  quoteProps: 'as-needed',
+
+  // JSX
+  jsxSingleQuote: false,
+  jsxBracketSameLine: false,
+
+  // Formatting
+  printWidth: 100,
+  arrowParens: 'avoid',
+  endOfLine: 'lf',
+  bracketSpacing: true,
+  bracketSameLine: false,
+
+  // Range formatting
+  ranges: {
+    from: null,
+    to: null,
+  },
+
+  // Overrides
+  overrides: [
+    {
+      files: ['*.json', '*.yaml', '*.yml'],
+      options: {
+        tabWidth: 2,
+        singleQuote: false,
+      },
+    },
+    {
+      files: ['*.md'],
+      options: {
+        proseWrap: 'preserve',
+        printWidth: 100,
+      },
+    },
+  ],
+};

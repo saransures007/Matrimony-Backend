@@ -10,10 +10,10 @@ export interface IMotherTongue {
 export type MotherTongueCreationAttributes = Optional<IMotherTongue, 'id' | 'region' | 'sort_by'>;
 
 export class MotherTongueModel extends Model<IMotherTongue, MotherTongueCreationAttributes> implements IMotherTongue {
-  public id!: number;
-  public name!: string;
-  public region!: string;
-  public sort_by!: number;
+  declare id: number;
+  declare name: string;
+  declare region: string;
+  declare sort_by: number;
 }
 
 export default function (sequelize: Sequelize): typeof MotherTongueModel {

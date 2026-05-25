@@ -10,10 +10,10 @@ export interface IStateCasteReservation {
 export type StateCasteReservationCreationAttributes = Optional<IStateCasteReservation, 'id'>;
 
 export class StateCasteReservationMappingModel extends Model<IStateCasteReservation, StateCasteReservationCreationAttributes> implements IStateCasteReservation {
-  public id!: number;
-  public state_id!: number;
-  public caste_id!: number;
-  public reservation_type!: string;
+  declare id: number;
+  declare state_id: number;
+  declare caste_id: number;
+  declare reservation_type: string;
 }
 
 export default function (sequelize: Sequelize): typeof StateCasteReservationMappingModel {

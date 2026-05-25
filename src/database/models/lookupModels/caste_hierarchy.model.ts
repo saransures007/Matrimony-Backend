@@ -14,12 +14,12 @@ export type CasteHierarchyCreationAttributes = Optional<ICasteHierarchy, 'id' | 
 export class CasteHierarchyModel
   extends Model<ICasteHierarchy, CasteHierarchyCreationAttributes>
   implements ICasteHierarchy {
-  public id!: number;
-  public name!: string;
-  public parent_id!: number | null;
-  public description!: string | null;
-  public sortby!: number;
-  public level!: 'Religion' | 'Sect' | 'Caste' | 'Subcaste' | 'Kulam';
+  declare id: number;
+  declare name: string;
+  declare parent_id: number | null;
+  declare description: string | null;
+  declare sortby: number;
+  declare level: 'Religion' | 'Sect' | 'Caste' | 'Subcaste' | 'Kulam';
 }
 
 export default function (sequelize: Sequelize): typeof CasteHierarchyModel {

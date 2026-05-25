@@ -10,13 +10,13 @@ export interface IOccupationRole {
 export type OccupationRoleCreationAttributes = Optional<IOccupationRole, 'id' | 'sortby'>;
 
 export class OccupationRoleModel extends Model<IOccupationRole, OccupationRoleCreationAttributes> implements IOccupationRole {
-  public id!: number;
-  public role_name!: string;
-  public category_id!: number;
-  public sortby!: number;
+  declare id: number;
+  declare role_name: string;
+  declare category_id: number;
+  declare sortby: number;
 
   // Association mixin
-  public getCategory!: BelongsToGetAssociationMixin<any>;
+  declare getCategory: BelongsToGetAssociationMixin<any>;
   public readonly category?: any;
 
   public static associations: {

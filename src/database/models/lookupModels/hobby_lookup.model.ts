@@ -10,10 +10,10 @@ export interface IHobby {
 export type HobbyCreationAttributes = Optional<IHobby, 'id' | 'sortby'>;
 
 export class HobbyModel extends Model<IHobby, HobbyCreationAttributes> implements IHobby {
-  public id!: number;
-  public label!: string;
-  public type!: 'H' | 'I';
-  public sortby!: number;
+  declare id: number;
+  declare label: string;
+  declare type: 'H' | 'I';
+  declare sortby: number;
 }
 
 export default function (sequelize: Sequelize): typeof HobbyModel {

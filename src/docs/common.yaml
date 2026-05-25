@@ -1,5 +1,5 @@
 # [GET] Get Static Data
-/common/static-data:
+/api/v1/common/static-data:
     get:
         tags:
             - Common

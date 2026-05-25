@@ -13,11 +13,11 @@ export interface ISwipeHistory {
 export type SwipeHistoryCreationAttributes = Optional<ISwipeHistory, 'id' | 'createdAt'>;
 
 export class SwipeHistoryModel extends Model<ISwipeHistory, SwipeHistoryCreationAttributes> implements ISwipeHistory {
-  public id!: number;
-  public actorProfileId!: string;
-  public targetProfileId!: string;
-  public action!: SwipeAction;
-  public readonly createdAt!: Date;
+  declare id: number;
+  declare actorProfileId: string;
+  declare targetProfileId: string;
+  declare action: SwipeAction;
+  declare readonly createdAt: Date;
 }
 
 export default function (sequelize: Sequelize): typeof SwipeHistoryModel {

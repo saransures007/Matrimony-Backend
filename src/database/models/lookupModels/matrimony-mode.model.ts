@@ -19,14 +19,14 @@ export type MatrimonyModeCreationAttributes = Optional<
 
 export class MatrimonyModeModel extends Model<IMatrimonyMode, MatrimonyModeCreationAttributes>
   implements IMatrimonyMode {
-  public id!: number;
-  public name!: string;
-  public display_name!: string;
+  declare id: number;
+  declare name: string;
+  declare display_name: string;
   public description?: string;
-  public is_active!: boolean;
-  public sort_order!: number;
-  public readonly created_at!: Date;
-  public readonly updated_at!: Date;
+  declare is_active: boolean;
+  declare sort_order: number;
+  declare readonly created_at: Date;
+  declare readonly updated_at: Date;
 }
 
 export default function (sequelize: Sequelize): typeof MatrimonyModeModel {

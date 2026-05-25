@@ -10,12 +10,12 @@ export interface IOccupationCategory {
 export type OccupationCategoryCreationAttributes = Optional<IOccupationCategory, 'id'>;
 
 export class OccupationCategoryModel extends Model<IOccupationCategory, OccupationCategoryCreationAttributes> implements IOccupationCategory {
-  public id!: number;
-  public sector_id!: number;
-  public name!: string;
+  declare id: number;
+  declare sector_id: number;
+  declare name: string;
 
   // Association mixin
-  public getRoles!: HasManyGetAssociationsMixin<OccupationRoleModel>;
+  declare getRoles: HasManyGetAssociationsMixin<OccupationRoleModel>;
   public readonly roles?: OccupationRoleModel[];
 
   public static associations: {

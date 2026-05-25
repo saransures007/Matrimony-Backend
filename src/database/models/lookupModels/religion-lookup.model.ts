@@ -9,9 +9,9 @@ export interface IReligion {
 export type ReligionCreationAttributes = Optional<IReligion, 'id' | 'sortby'>;
 
 export class ReligionModel extends Model<IReligion, ReligionCreationAttributes> implements IReligion {
-  public id!: number;
-  public name!: string;
-  public sortby!: number;
+  declare id: number;
+  declare name: string;
+  declare sortby: number;
 }
 
 export default function (sequelize: Sequelize): typeof ReligionModel {

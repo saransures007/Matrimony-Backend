@@ -1,0 +1,675 @@
+/**
+ * Swagger docs shim for versioned API routes.
+ * swagger-jsdoc scans this file because the versioned route tree is included in the config.
+ */
+
+/**
+ * @openapi
+ * /api/v1/health:
+ *   get:
+ *     tags:
+ *       - System
+ *     summary: Check API v1 health
+ *     responses:
+ *       200:
+ *         description: API v1 is healthy
+ */
+
+/**
+ * @openapi
+ * /api/v1/auth/register:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Register a new account and profile
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - account
+ *               - profile
+ *             properties:
+ *               account:
+ *                 type: object
+ *                 description: Account creation payload
+ *               profile:
+ *                 type: object
+ *                 description: Profile creation payload
+ *     responses:
+ *       201:
+ *         description: Account registered successfully
+ *       400:
+ *         description: Validation failed
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @openapi
+ * /api/v1/auth/login/password:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Login with email/phone and password
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - identifier
+ *               - password
+ *               - role
+ *             properties:
+ *               identifier:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               role:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *       400:
+ *         description: Validation failed
+ *       401:
+ *         description: Invalid credentials
+ */
+
+/**
+ * @openapi
+ * /api/v1/auth/login/otp:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Login with phone and OTP
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - phone
+ *               - otp
+ *             properties:
+ *               phone:
+ *                 type: string
+ *               otp:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *       400:
+ *         description: Validation failed
+ *       401:
+ *         description: Invalid OTP
+ */
+
+/**
+ * @openapi
+ * /api/v1/auth/check-availability:
+ *   get:
+ *     tags:
+ *       - Auth
+ *     summary: Check if email or phone is already taken
+ *     parameters:
+ *       - in: query
+ *         name: email
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: phone
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Availability checked
+ *       400:
+ *         description: Validation failed
+ */
+
+/**
+ * @openapi
+ * /api/v1/auth/otp/request:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Request a login OTP
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - phone
+ *             properties:
+ *               phone:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: OTP sent successfully
+ *       400:
+ *         description: Validation failed
+ */
+
+/**
+ * @openapi
+ * /api/v1/auth/otp/verify:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Verify OTP and complete login
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - phone
+ *               - otp
+ *             properties:
+ *               phone:
+ *                 type: string
+ *               otp:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *       400:
+ *         description: Validation failed
+ *       401:
+ *         description: Invalid OTP
+ */
+
+/**
+ * @openapi
+ * /api/v1/auth/logout:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Logout current user
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Logged out successfully
+ *       401:
+ *         description: Unauthorized
+ */
+
+/**
+ * @openapi
+ * /api/v1/common/static-data:
+ *   get:
+ *     tags:
+ *       - Common
+ *     summary: Get static lookup data
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved static data
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @openapi
+ * /api/v1/matches:
+ *   get:
+ *     tags:
+ *       - Matches
+ *     summary: Get the current user's matches
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Matches fetched
+ *       401:
+ *         description: Unauthorized
+ */
+
+/**
+ * @openapi
+ * /api/v1/swipes/next:
+ *   get:
+ *     tags:
+ *       - Swipes
+ *     summary: Get next profiles to swipe on
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: cursor
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 50
+ *           default: 10
+ *     responses:
+ *       200:
+ *         description: Next profiles fetched
+ *       401:
+ *         description: Unauthorized
+ */
+
+/**
+ * @openapi
+ * /api/v1/swipes/profiles/{profileId}:
+ *   get:
+ *     tags:
+ *       - Swipes
+ *     summary: Get full profile details for a swipe card
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: profileId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Profile fetched
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Profile not found
+ */
+
+/**
+ * @openapi
+ * /api/v1/swipes:
+ *   post:
+ *     tags:
+ *       - Swipes
+ *     summary: Record a swipe action
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - targetProfileId
+ *               - action
+ *             properties:
+ *               targetProfileId:
+ *                 type: string
+ *                 format: uuid
+ *               action:
+ *                 type: string
+ *                 enum:
+ *                   - like
+ *                   - reject
+ *     responses:
+ *       201:
+ *         description: Swipe recorded
+ *       400:
+ *         description: Validation failed
+ *       401:
+ *         description: Unauthorized
+ */
+
+/**
+ * @openapi
+ * /api/v1/interests/received:
+ *   get:
+ *     tags:
+ *       - Interests
+ *     summary: List received interests
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: cursor
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 50
+ *           default: 20
+ *     responses:
+ *       200:
+ *         description: Received interests fetched
+ *       401:
+ *         description: Unauthorized
+ */
+
+/**
+ * @openapi
+ * /api/v1/interests/sent:
+ *   get:
+ *     tags:
+ *       - Interests
+ *     summary: List sent interests
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: cursor
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 50
+ *           default: 20
+ *     responses:
+ *       200:
+ *         description: Sent interests fetched
+ *       401:
+ *         description: Unauthorized
+ */
+
+/**
+ * @openapi
+ * /api/v1/interests/matches:
+ *   get:
+ *     tags:
+ *       - Interests
+ *     summary: List mutual matches from interests
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: cursor
+ *         schema:
+ *           type: string
+ *           format: date-time
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 50
+ *           default: 20
+ *     responses:
+ *       200:
+ *         description: Matches fetched
+ *       401:
+ *         description: Unauthorized
+ */
+
+/**
+ * @openapi
+ * /api/v1/interests/{likeId}/accept:
+ *   post:
+ *     tags:
+ *       - Interests
+ *     summary: Accept an incoming interest
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: likeId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *     responses:
+ *       200:
+ *         description: Interest accepted
+ *       400:
+ *         description: Validation failed
+ *       401:
+ *         description: Unauthorized
+ */
+
+/**
+ * @openapi
+ * /api/v1/interests/{likeId}/reject:
+ *   post:
+ *     tags:
+ *       - Interests
+ *     summary: Reject an incoming interest
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: likeId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *     responses:
+ *       200:
+ *         description: Interest rejected
+ *       400:
+ *         description: Validation failed
+ *       401:
+ *         description: Unauthorized
+ */
+
+/**
+ * @openapi
+ * /api/v1/media/profile-pictures:
+ *   get:
+ *     tags:
+ *       - Media
+ *     summary: List current user's profile pictures
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Profile pictures fetched
+ *       401:
+ *         description: Unauthorized
+ */
+
+/**
+ * @openapi
+ * /api/v1/media/profile-pictures/presign:
+ *   post:
+ *     tags:
+ *       - Media
+ *     summary: Create presigned upload URLs
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - files
+ *             properties:
+ *               files:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     fileName:
+ *                       type: string
+ *                     contentType:
+ *                       type: string
+ *                       enum:
+ *                         - image/jpeg
+ *                         - image/jpg
+ *                         - image/png
+ *                         - image/webp
+ *                     sizeBytes:
+ *                       type: integer
+ *                     sortOrder:
+ *                       type: integer
+ *                     isProfilePic:
+ *                       type: boolean
+ *     responses:
+ *       201:
+ *         description: Upload URLs created
+ *       400:
+ *         description: Validation failed
+ *       401:
+ *         description: Unauthorized
+ */
+
+/**
+ * @openapi
+ * /api/v1/media/profile-pictures/complete:
+ *   post:
+ *     tags:
+ *       - Media
+ *     summary: Mark profile picture uploads complete
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - uploads
+ *             properties:
+ *               uploads:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     uploadId:
+ *                       type: string
+ *                       format: uuid
+ *                     storageKey:
+ *                       type: string
+ *                     publicUrl:
+ *                       type: string
+ *                     fileName:
+ *                       type: string
+ *                     contentType:
+ *                       type: string
+ *                     sizeBytes:
+ *                       type: integer
+ *                     sortOrder:
+ *                       type: integer
+ *                     isProfilePic:
+ *                       type: boolean
+ *     responses:
+ *       201:
+ *         description: Profile pictures saved
+ *       400:
+ *         description: Validation failed
+ *       401:
+ *         description: Unauthorized
+ */
+
+/**
+ * @openapi
+ * /api/v1/media/profile-pictures/rollback:
+ *   post:
+ *     tags:
+ *       - Media
+ *     summary: Roll back failed or partial uploads
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - storageKeys
+ *             properties:
+ *               storageKeys:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: Upload rollback completed
+ *       400:
+ *         description: Validation failed
+ *       401:
+ *         description: Unauthorized
+ */
+
+/**
+ * @openapi
+ * /api/v1/media/profile-pictures/{pictureId}:
+ *   delete:
+ *     tags:
+ *       - Media
+ *     summary: Delete a profile picture
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: pictureId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *     responses:
+ *       200:
+ *         description: Profile picture deleted
+ *       400:
+ *         description: Invalid picture ID
+ *       401:
+ *         description: Unauthorized
+ */
+
+/**
+ * @openapi
+ * /api/v1/media/profile-pictures/verification/status:
+ *   get:
+ *     tags:
+ *       - Media
+ *     summary: Get photo verification status
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Photo verification status fetched
+ *       401:
+ *         description: Unauthorized
+ */
+
+/**
+ * @openapi
+ * /api/v1/media/profile-pictures/verification/submit:
+ *   post:
+ *     tags:
+ *       - Media
+ *     summary: Submit pictures for verification
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               primaryPictureId:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: Photo verification submitted
+ *       400:
+ *         description: Validation failed
+ *       401:
+ *         description: Unauthorized
+ */
+
+export {};

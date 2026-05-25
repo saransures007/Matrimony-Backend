@@ -23,17 +23,17 @@ export class CityLookupModel
   extends Model<ICityLookup, CityLookupCreationAttributes>
   implements ICityLookup
 {
-  public id!: number;
-  public state_id!: number;
-  public name!: string;
-  public latitude!: number | null;
-  public longitude!: number | null;
-  public timezone!: string | null;
-  public is_imp!: boolean;
-  public is_top!: boolean;
-  public imp_order!: number;
-  public tier!: number;
-  public sortby!: number;
+  declare id: number;
+  declare state_id: number;
+  declare name: string;
+  declare latitude: number | null;
+  declare longitude: number | null;
+  declare timezone: string | null;
+  declare is_imp: boolean;
+  declare is_top: boolean;
+  declare imp_order: number;
+  declare tier: number;
+  declare sortby: number;
 }
 
 export default function (sequelize: Sequelize): typeof CityLookupModel {

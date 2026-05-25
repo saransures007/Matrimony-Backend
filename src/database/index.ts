@@ -9,7 +9,7 @@ import SalaryRangeModel from './models/lookupModels/salary-range.model';
 import CountryWithStatesModel from './models/lookupModels/country-with-states.model';
 import OccupationRoleModel from './models/lookupModels/occupation-role.model';
 import ReligionModel from './models/lookupModels/religion-lookup.model';
-import HobbyModel from './models/lookupModels/hobby_lookup-model';
+import HobbyModel from './models/lookupModels/hobby_lookup.model';
 import WellKnownCollegeModel from './models/lookupModels/well_known_college.model';
 import EmployedInModel from './models/lookupModels/employedin_lookup.model';
 import OccupationGroupingModel from './models/lookupModels/occupation_grouping.model';
@@ -25,6 +25,8 @@ import AccountRolesModel from './models/profile/account_roles.model';
 import RolesModel from './models/profile/roles.model';
 import profileModel from './models/profile/profiles.model';
 import profilePictureModel from './models/profile/profile_picture.model';
+import profileSettingsModel from './models/profile/profile_settings.model';
+import profilePreferencesModel from './models/profile/profile_preferences.model';
 import otpVerificationModel, { OtpVerificationModel } from './models/profile/otp_verification.model';
 import profileLikeModel from './models/matches/profile_like.model';
 import matchModel from './models/matches/match.model';
@@ -93,6 +95,8 @@ export const DB = {
   roles: RolesModel(sequelize),
   profiles: profileModel(sequelize),
   profile_picture: profilePictureModel(sequelize),
+  profile_settings: profileSettingsModel(sequelize),
+  profile_preferences: profilePreferencesModel(sequelize),
   otp_verification: otpVerificationModel(sequelize),
   profile_likes: profileLikeModel(sequelize),
   matches: matchModel(sequelize),
@@ -138,7 +142,19 @@ export const DB = {
 // DB.religion_lookup.hasMany(CasteHierarchy, { foreignKey: 'religion_id', as: 'castes' });
 
 
-//--------------- Profile -------------
+ //--------------- Profile -------------
+// Account ↔ Profile association
+DB.accounts.hasOne(DB.profiles, {
+  foreignKey: 'accountId',
+  sourceKey: 'accountId',
+  as: 'profile',
+});
+DB.profiles.belongsTo(DB.accounts, {
+  foreignKey: 'accountId',
+  targetKey: 'accountId',
+  as: 'account',
+});
+
 // In your DB init
 DB.accounts.belongsToMany(DB.roles, {
   through: DB.account_roles,

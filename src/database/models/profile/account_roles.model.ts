@@ -6,8 +6,8 @@ export interface IAccountRole {
 }
 
 export class AccountRoleModel extends Model<IAccountRole> implements IAccountRole {
-  public accountId!: string;
-  public roleId!: number;
+  declare accountId: string;
+  declare roleId: number;
 }
 
 export default function (sequelize: Sequelize): typeof AccountRoleModel {

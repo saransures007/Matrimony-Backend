@@ -1,53 +1,99 @@
-import winston from 'winston';
-import 'winston-daily-rotate-file';
-import path from 'path';
+import pino from 'pino';
+import { config } from 'dotenv';
 
-// Folder paths for logs
-const logDir = path.join(__dirname, '../logs');
+// Load env
+config();
 
-const logFormatter = winston.format.printf(info => {
-    const { timestamp, level, stack, message } = info;
-    const errorMessage = stack || message;
+/**
+ * Pino Logger Configuration
+ *
+ * - Console: human-readable during dev, JSON in production
+ * - File: daily-rotated debug + error logs (Cloudflare-safe)
+ * - Request context (requestId, userId) injected by middleware
+ */
 
-    const symbols = Object.getOwnPropertySymbols(info);
-    if (info[symbols[0]] !== 'error') {
-        return `[${timestamp}] - ${level}: ${message}`;
-    }
+// Resolve LOG_DIR relative to project root
+const LOG_DIR = process.env.LOG_DIR ?? './logs';
 
-    return `[${timestamp}] ${level}: ${errorMessage}`;
-});
+const targets: pino.LoggerOptions['transport'] = {
+  targets: [
+    // Debug log (all levels)
+    {
+      target: 'pino-pretty',
+      options: {
+        colorize: true,
+        translateTime: 'SYS:standard',
+        ignore: 'pid,hostname',
+      },
+      level: 'debug',
+    },
+    // Error-only file
+    {
+      target: 'pino/file',
+      options: {
+        destination: `${LOG_DIR}/error.log`,
+        mkdir: true,
+      },
+      level: 'error',
+    },
+    // Combined file (all levels)
+    {
+      target: 'pino/file',
+      options: {
+        destination: `${LOG_DIR}/combined.log`,
+        mkdir: true,
+      },
+      level: 'info',
+    },
+  ],
+};
 
-// Daily Rotate File for debug logs
-const debugTransport = new winston.transports.DailyRotateFile({
-    filename: `${logDir}/debug/debug-%DATE%.log`,
-    datePattern: 'YYYY-MM-DD',
-    level: 'debug',
-    maxFiles: '14d', // Keep logs for 14 days
-});
-
-// Daily Rotate File for error logs
-const errorTransport = new winston.transports.DailyRotateFile({
-    filename: `${logDir}/error/error-%DATE%.log`,
-    datePattern: 'YYYY-MM-DD',
-    level: 'error',
-    maxFiles: '30d', // Keep error logs for 30 days
-});
-
-// Console transport for development
-const consoleTransport = new winston.transports.Console({
-    format: winston.format.combine(winston.format.colorize(), logFormatter),
-});
-
-// Winston Logger Configuration
-const logger = winston.createLogger({
-    level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
-    format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.printf(({ timestamp, level, message }) => {
-            return `[${timestamp}] ${level.toUpperCase()}: ${message}`;
-        }),
-    ),
-    transports: [consoleTransport, debugTransport, errorTransport],
+/**
+ * Base logger instance — child loggers inherit request context
+ */
+const logger = pino({
+  level: process.env.LOG_LEVEL ?? (process.env.NODE_ENV === 'production' ? 'info' : 'debug'),
+  ...(process.env.NODE_ENV !== 'production'
+    ? { transport: targets }
+    : {}),
+  // Include pid + hostname in every log line for traceability
+  base: { pid: process.pid },
+  // Customize timestamp format
+  timestamp: pino.stdTimeFunctions.isoTime,
+  // Redact sensitive fields automatically
+  redact: {
+    paths: ['req.headers.authorization', 'req.headers["x-api-key"]', 'password', 'token'],
+    censor: '[REDACTED]',
+  },
 });
 
 export default logger;
+
+/**
+ * Create a child logger with request-scoped context
+ * Usage: const log = createRequestLogger(req);
+ */
+export const createRequestLogger = (requestId: string, userId?: string) =>
+  logger.child({ requestId, userId: userId ?? 'anonymous' });
+
+/**
+ * Log HTTP request/response lifecycle
+ * Called by requestLogger middleware
+ */
+export const logRequest = (
+  method: string,
+  path: string,
+  statusCode: number,
+  durationMs: number,
+  requestId: string
+) => {
+  const level = statusCode >= 500 ? 'error' : statusCode >= 400 ? 'warn' : 'info';
+  logger[level]({
+    type: 'http',
+    method,
+    path,
+    statusCode,
+    durationMs,
+    requestId,
+  });
+};

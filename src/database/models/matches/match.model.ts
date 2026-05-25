@@ -11,11 +11,11 @@ export interface IMatch {
 export type MatchCreationAttributes = Optional<IMatch, 'id' | 'createdAt' | 'updatedAt'>;
 
 export class MatchModel extends Model<IMatch, MatchCreationAttributes> implements IMatch {
-  public id!: number;
-  public profileAId!: string;
-  public profileBId!: string;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare id: number;
+  declare profileAId: string;
+  declare profileBId: string;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 }
 
 export default function (sequelize: Sequelize): typeof MatchModel {

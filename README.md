@@ -1,152 +1,183 @@
+# Matrimony Backend
 
+Production-grade Express + TypeScript backend for the matrimony app.
 
+## Stack
 
----
+- Node.js 18+
+- Express 5
+- TypeScript
+- Sequelize
+- Swagger / OpenAPI
+- Zod + Joi validation
+- Redis, JWT, Socket.IO, S3-compatible media storage
 
-## ✨ Features
-- ⚡ [**Express.js**](https://expressjs.com/) as the backend framework
-- 📋 [**Swagger**](https://swagger.io/docs/) for API documentations
-- 🛠 [**Typescript**](https://www.typescriptlang.org/docs/) for strong type support
-- 📄 **Linting** with [**ESlint**](https://eslint.org/docs/latest/) and [**Prettier**](https://prettier.io/docs/en/)
+## Features
 
----
+- Authentication and account management
+- User profile and preferences APIs
+- Media upload and verification flow
+- Match, swipe, and interest APIs
+- Centralized error handling and request logging
+- Swagger documentation at runtime
+- Linting, formatting, unit tests, and integration tests
 
-## 🚀 Prerequisite
+## Prerequisites
 
-Make sure you have installed the following tools:
+- Node.js 18 or newer
+- npm
+- MySQL or PostgreSQL
+- Redis
+- Optional S3/R2-compatible object storage for media
 
-- **Node.js** >= v18.x.x  
-- **npm**
+## Setup
 
----
+Install dependencies:
 
-## 📥 Installation
+```bash
+npm install
+```
 
-1. Install the dependencies:
+Create a local environment file:
 
-   ```bash
-   npm install
-   ```
+```bash
+cp .env.example .env.development
+```
 
-2. Create `.env.development` to store the environment configuration:
+If you do not have `.env.example`, create `.env.development` manually and set the required values below.
 
-   ```bash
-   .env.development
-   ```
+## Environment variables
 
-3. Fill the `.env.development` file based on your requirements:
+At minimum, configure:
 
-   ```
-    PORT = port number
-    NODE_ENV = env
-    BASE_URL = base url
-    
-    DB_PORT = db port
-    DB_USERNAME = db username
-    DB_PASSWORD = db password
-    DB_NAME = db name
-    DB_HOST = host
-    DB_DIALECT = dialect
-    
-    JWT_ACCESS_TOKEN_SECRET = JWT secret
-   ```
+```bash
+PORT=5000
+NODE_ENV=development
+BASE_URL=http://localhost:5000
 
-## 🏃 Run the server and the test
+DB_PORT=3306
+DB_USERNAME=
+DB_PASSWORD=
+DB_NAME=
+DB_HOST=
+DB_DIALECT=mysql
 
-Run the server in the development mode:
+JWT_ACCESS_TOKEN_SECRET=
+
+REDIS_URL=
+```
+
+Optional media settings:
+
+```bash
+AWS_REGION=
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_S3_BUCKET=
+AWS_S3_ENDPOINT=
+AWS_S3_FORCE_PATH_STYLE=
+```
+
+Optional messaging / auth integrations:
+
+```bash
+TWILIO_ACCOUNT_SID=
+TWILIO_AUTH_TOKEN=
+TWILIO_PHONE_NUMBER=
+```
+
+## Running
+
+Development:
 
 ```bash
 npm run dev
 ```
 
-Or in the production mode
+Production build and start:
 
 ```bash
+npm run build
 npm start
 ```
 
-Run the test:
-- Test all function
-   ```bash
-   npm run test
-   ```
-- Test by selecting the file
-   ```bash
-   npm run test path-to-your-test-file/file.test.ts
-   ```
----
+## Quality checks
 
-## 🛠 Additional
-
-- **Linting and code formatting:**
-
-  ```bash
-  npm run lint      # Linting check
-  npm run lint:fix  # Formatting code with prettier
-  ```
-
-- **Creating DB table:**
-
-  ```bash
-  npm run migration:generate --name "create-table-name"
-  ```
----
-
-## 📚 API Documentation
-
-Access swagger documentations: [http://localhost:5000/api-docs](http://localhost:5000/api-docs)
-
-Swagger will automatically return the documentations based on route file annotation.
-
----
-
-## 📂 Project structure
-
-Let's have a look at this structure:
-
-```
-├── /node_modules
-├── /src                 
-│   ├── /config          # Base configuration such as .env key and sequelize-cli configuration
-│   ├── /database
-│   │   ├── /migrations  # DB migration files to migrate our DB tables
-│   │   └── /models      # DB model files that will be used in the development
-│   ├── /docs            # Swagger documentations
-│   ├── /interfaces      # Interfaces
-│   ├── /logs            # Access logs
-│   ├── /middleware      # App middlewares
-│   ├── /modules         # App modules
-│   │   ├── /auth        #    
-│   │   ├── /user        # These module directories will store repo, service, controller, routes, and validator files.
-│   │   └── /etc         #
-│   ├── /routes          # Main route file that store all of the module routes 
-│   ├── /types           # typescript support
-│   ├── /utils           # Utils
-│   └── server.js        # Entry point of the app
-├── /tests               # Unit test main folder
-│   ├── /middleware      # Middleware tests
-│   ├── /modules         # Modules tests
-├── .env.development     # Development environment variables
-├── package.json         # Dependencies and scripts
-└── README.md            # Project documentation
-```
-
----
-
-## 🔗 The example of API Request
-
-**POST** a request to `/api/example`:
+Lint:
 
 ```bash
-curl --request POST   --url http://localhost:5000/api/auth/signup
+npm run lint
 ```
 
-Response:
+Auto-fix lint issues:
 
-```json
-{
-    "message": "Successfully signed up"
-}
+```bash
+npm run lint:fix
 ```
 
----
+Format:
+
+```bash
+npm run format
+npm run format:check
+```
+
+Tests:
+
+```bash
+npm test
+npm run test:coverage
+```
+
+## Database tasks
+
+Generate a migration:
+
+```bash
+npm run migration:generate --name "create-table-name"
+```
+
+Run migrations:
+
+```bash
+npm run migration
+```
+
+Seed Tamil Nadu lookup data:
+
+```bash
+npm run seed:tamilnadu
+npm run seed:tamilnadu:clean
+```
+
+## API documentation
+
+Swagger UI is available at:
+
+```text
+http://localhost:5000/api-docs
+```
+
+## Project structure
+
+```text
+src/
+├── config/        # app, sequelize, and swagger configuration
+├── database/      # models, migrations, seeds
+├── docs/          # OpenAPI docs
+├── middlewares/   # auth, validation, logging, rate limiting
+├── modules/       # feature modules
+├── routes/        # route aggregation
+├── schemas/       # request validation schemas
+├── types/         # shared TypeScript types
+└── utils/         # app utilities
+tests/             # unit and integration tests
+```
+
+## Deployment notes
+
+- Keep secrets in environment variables, never in source control.
+- Run `npm run build` before deployment.
+- Apply migrations before starting the server.
+- Ensure Redis and the database are reachable in production.
+- Use a process manager such as PM2, systemd, or container orchestration.

@@ -1,25 +1,38 @@
 {
-    "compilerOptions": {
-        "target": "es6",
-        "module": "commonjs",
-        "outDir": "./dist",
-        "rootDir": "./src",
-        "baseUrl": "./src",
-        "paths": {
-            "@/*": ["*"],
-            "@routes/*": ["routes/*"],
-            "@database/*": ["database/*"],
-            "@utils/*": ["utils/*"],
-            "@types/*": ["types/*"],
-            "@modules/*": ["modules/*"]
-        },
-        "esModuleInterop": true,
-        "typeRoots": ["node_modules/@types"],
-        "strict": true,
-        "resolveJsonModule": true,
-        "skipLibCheck": true,
-        "lib": ["esnext", "dom"]
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "Node16",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": "./src",
+    "ignoreDeprecations": "5.0",
+    "paths": {
+      "@/*": ["*"],
+      "@routes/*": ["routes/*"],
+      "@database/*": ["database/*"],
+      "@utils/*": ["utils/*"],
+      "@types/*": ["types/*",],
+      "@modules/*": ["modules/*"],
+      "@middlewares/*": ["middlewares/*"],
+      "@schemas/*": ["schemas/*"],
+      "@config": ["config/index.ts"]
     },
-    "include": ["src/**/*.ts", "src/database/models/index.ts"],
-    "exclude": ["node_modules"]
+    "esModuleInterop": true,
+    "typeRoots": ["node_modules/@types", "src/@types",  "src/types"],
+    "strict": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "types": ["node", "jest"],
+    "lib": ["esnext", "dom"],
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "moduleResolution": "node16"
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/database/models/index.ts",
+    "src/@types/**/*.d.ts"
+  ],
+  "exclude": ["node_modules", "dist", "tests"]
 }

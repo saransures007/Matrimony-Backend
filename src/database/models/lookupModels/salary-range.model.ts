@@ -18,15 +18,15 @@ export type SalaryRangeCreationAttributes = Optional<
 >;
 
 export class SalaryRangeModel extends Model<ISalaryRange, SalaryRangeCreationAttributes> implements ISalaryRange {
-  public id!: number;
-  public min_salary!: number;
-  public max_salary!: number;
-  public label!: string;
-  public min_label!: string;
-  public max_label!: string;
-  public min_abs_val!: number;
-  public max_abs_val!: number;
-  public sortby!: number;
+  declare id: number;
+  declare min_salary: number;
+  declare max_salary: number;
+  declare label: string;
+  declare min_label: string;
+  declare max_label: string;
+  declare min_abs_val: number;
+  declare max_abs_val: number;
+  declare sortby: number;
 }
 
 export default function (sequelize: Sequelize): typeof SalaryRangeModel {

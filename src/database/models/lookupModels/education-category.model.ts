@@ -10,11 +10,11 @@ export type EducationCategoryCreationAttributes = Optional<IEducationCategory, '
 
 export class EducationCategoryModel extends Model<IEducationCategory, EducationCategoryCreationAttributes>
   implements IEducationCategory {
-  public id!: number;
-  public name!: string;
+  declare id: number;
+  declare name: string;
 
   // mixins
-  public getDegrees!: HasManyGetAssociationsMixin<EducationDegreeModel>;
+  declare getDegrees: HasManyGetAssociationsMixin<EducationDegreeModel>;
   public readonly degrees?: EducationDegreeModel[];
 
   public static associations: {

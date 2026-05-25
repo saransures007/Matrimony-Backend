@@ -12,12 +12,12 @@ export interface IHeightLookup {
 export type HeightLookupCreationAttributes = Optional<IHeightLookup, 'id' | 'sortby'>;
 
 export class HeightLookupModel extends Model<IHeightLookup, HeightLookupCreationAttributes> implements IHeightLookup {
-  public id!: number;
-  public label!: string;
-  public feet!: number;
-  public inches!: number;
-  public meters!: number;
-  public sortby!: number;
+  declare id: number;
+  declare label: string;
+  declare feet: number;
+  declare inches: number;
+  declare meters: number;
+  declare sortby: number;
 }
 
 export default function (sequelize: Sequelize): typeof HeightLookupModel {

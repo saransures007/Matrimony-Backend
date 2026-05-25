@@ -13,7 +13,7 @@ export interface IProfileSettings {
 }
 
 export class ProfileSettingsModel extends Model<IProfileSettings> implements IProfileSettings {
-  public profileId!: string;
+  declare profileId: string;
   public allowMessagesFrom?: 'Everyone' | 'Connections' | 'PremiumOnly' | 'NoOne';
   public showAge?: boolean;
   public showHeight?: boolean;

@@ -48,11 +48,12 @@ export const checkAvailabilityController = async (req: Request, res: Response, n
   }
 };
 
-export const requestLoginOtpController = async (req: Request, res: Response, next: NextFunction) => {
+export const requestLoginOtpController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { phone } = req.body;
     if (!phone || !/^\d+$/.test(phone)) {
-      return res.status(400).json({ message: 'Valid phone number is required' });
+      res.status(400).json({ message: 'Valid phone number is required' });
+      return;
     }
     const result = await authService.requestLoginOtp(phone);
     res.status(200).json({ message: 'OTP sent successfully', data: result });
@@ -61,14 +62,16 @@ export const requestLoginOtpController = async (req: Request, res: Response, nex
   }
 };
 
-export const verifyLoginOtpController = async (req: Request, res: Response, next: NextFunction) => {
+export const verifyLoginOtpController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { phone, otp } = req.body;
     if (!phone || !/^\d+$/.test(phone)) {
-      return res.status(400).json({ message: 'Valid phone number is required' });
+      res.status(400).json({ message: 'Valid phone number is required' });
+      return;
     }
     if (!otp || !/^\d{6}$/.test(otp)) {
-      return res.status(400).json({ message: 'Valid 6-digit OTP is required' });
+      res.status(400).json({ message: 'Valid 6-digit OTP is required' });
+      return;
     }
     const result = await authService.verifyLoginOtp(phone, otp);
     res.status(200).json({ message: 'Login successful', data: result });

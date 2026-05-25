@@ -11,7 +11,7 @@ import {
   R2_SECRET_ACCESS_KEY,
 } from '@/config';
 
-const allowedContentTypes = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const allowedContentTypes = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/webp']);
 const maxImageBytes = 8 * 1024 * 1024;
 
 type PresignFile = {
@@ -147,7 +147,8 @@ presignProfilePictures: async (accountId: string, files: PresignFile[]) => {
             contentType: upload.contentType,
             sizeBytes: upload.sizeBytes,
             url: upload.publicUrl,
-            isProfilePic: upload.isProfilePic,
+            isProfilePic: !!upload.isProfilePic,
+            isApproved: false,
             uploadStatus: 'uploaded',
             sortOrder: upload.sortOrder ?? 0,
           },

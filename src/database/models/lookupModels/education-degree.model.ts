@@ -16,17 +16,17 @@ export type EducationDegreeCreationAttributes = Optional<IEducationDegree, 'id'>
 
 export class EducationDegreeModel extends Model<IEducationDegree, EducationDegreeCreationAttributes>
   implements IEducationDegree {
-  public id!: number;
-  public degree_name!: string;
-  public category_id!: number;
-  public full_form!: string | null;
-  public display_module!: string | null;
-  public is_most_common!: string | null;
-  public education_type!: string | null;
-  public sortby!: number;
+  declare id: number;
+  declare degree_name: string;
+  declare category_id: number;
+  declare full_form: string | null;
+  declare display_module: string | null;
+  declare is_most_common: string | null;
+  declare education_type: string | null;
+  declare sortby: number;
 
   // mixins
-  public getCategory!: BelongsToGetAssociationMixin<EducationCategoryModel>;
+  declare getCategory: BelongsToGetAssociationMixin<EducationCategoryModel>;
   public readonly category?: EducationCategoryModel;
 
   public static associations: {

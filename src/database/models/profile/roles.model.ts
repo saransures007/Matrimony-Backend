@@ -1,11 +1,11 @@
 import { Model, DataTypes } from 'sequelize';
 
 export class RoleModel extends Model {
-  public roleId!: number;
-  public name!: string;
+  declare roleId: number;
+  declare name: string;
   public description?: string;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 }
 
 export default function (sequelize: any): typeof RoleModel {

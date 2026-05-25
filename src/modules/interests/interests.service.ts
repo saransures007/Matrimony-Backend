@@ -31,7 +31,14 @@ const profileSummary = async (profileId: string) => {
   };
 };
 
-const parseCursor = (cursor?: string) => cursor ? { [Op.lt]: new Date(cursor) } : undefined;
+const parseCursor = (cursor?: string) => (cursor ? { [Op.lt]: new Date(cursor) } : undefined);
+
+const getNextCursor = <T extends { createdAt?: Date | null }>(rows: T[], limit: number) => {
+  if (rows.length <= limit) return null;
+  const lastRow = rows[limit - 1];
+  const createdAt = lastRow?.createdAt;
+  return createdAt instanceof Date ? createdAt.toISOString() : null;
+};
 
 export const interestsService = {
   received: async (accountId: string, cursor?: string, limit = 20) => {
@@ -52,7 +59,7 @@ export const interestsService = {
       createdAt: like.createdAt,
       profile: await profileSummary(like.likerProfileId),
     })));
-    return { data: items.filter((item) => item.profile), nextCursor: rows.length > limit ? page[page.length - 1].createdAt.toISOString() : null };
+    return { data: items.filter((item) => item.profile), nextCursor: getNextCursor(rows, limit) };
   },
 
   sent: async (accountId: string, cursor?: string, limit = 20) => {
@@ -72,7 +79,7 @@ export const interestsService = {
       createdAt: like.createdAt,
       profile: await profileSummary(like.likedProfileId),
     })));
-    return { data: items.filter((item) => item.profile), nextCursor: rows.length > limit ? page[page.length - 1].createdAt.toISOString() : null };
+    return { data: items.filter((item) => item.profile), nextCursor: getNextCursor(rows, limit) };
   },
 
   matches: async (accountId: string, cursor?: string, limit = 20) => {
@@ -91,7 +98,7 @@ export const interestsService = {
         profile: await profileSummary(otherProfileId),
       };
     }));
-    return { data: items.filter((item) => item.profile), nextCursor: rows.length > limit ? page[page.length - 1].createdAt.toISOString() : null };
+    return { data: items.filter((item) => item.profile), nextCursor: getNextCursor(rows, limit) };
   },
 
   accept: async (accountId: string, likeId: number) => {

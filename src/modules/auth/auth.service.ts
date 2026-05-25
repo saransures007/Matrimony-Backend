@@ -148,6 +148,7 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 import { generateJwt } from '@/utils/auth/auth.utils';
+import logger from '@/utils/logger';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
 const JWT_EXPIRES = '7d';
@@ -158,6 +159,7 @@ export const authService = {
     try {
       const accountId = await authRepo.createAccount(accountData, t);
       profileData.accountId = accountId;
+      logger.info("profileData"+profileData)
       const profileId = await authRepo.createProfile(profileData, t);
 
       await t.commit();
@@ -189,7 +191,7 @@ export const authService = {
     return { token };
   },
 
-  loginWithOTP: async (phoneOrEmail: string, otp: string, role: RoleType) => {
+  loginWithOTP: async (phoneOrEmail: string, otp: string, role?: RoleType) => {
     let account = phoneOrEmail.includes('@')
       ? await authRepo.getAccountByEmail(phoneOrEmail)
       : await authRepo.getAccountByPhone(phoneOrEmail);
@@ -199,9 +201,9 @@ export const authService = {
     const isVerified = await authRepo.verifyOTP(account.accountId, otp, 'PhoneVerification');
     if (!isVerified) throw new Error('OTP invalid or expired');
 
-    if (!account.roles.includes(role)) throw new Error('Unauthorized role');
+    if (role && !account.roles.includes(role)) throw new Error('Unauthorized role');
 
-    const token = jwt.sign({ accountId: account.accountId, role }, JWT_SECRET, { expiresIn: JWT_EXPIRES });
+    const token = jwt.sign({ accountId: account.accountId, role: role ?? 'USER' }, JWT_SECRET, { expiresIn: JWT_EXPIRES });
     return { token };
   },
 
@@ -244,7 +246,7 @@ export const authService = {
       console.log("sending otp..")
       
       // Send SMS via Twilio
-      const { sendOtpSms } = await import('@/middlewares/otp.service');
+      const { sendOtpSms } = await import('../../middlewares/otp.service.js');
       if (process.env.NODE_ENV === "development") {
         console.log(`OTP for ${phoneNumber}: ${otp}`);
       } else {

@@ -23,17 +23,17 @@ export class CountryLookupModel
   extends Model<ICountryLookup, CountryLookupCreationAttributes>
   implements ICountryLookup
 {
-  public id!: number;
-  public name!: string;
-  public iso2!: string;
-  public iso3!: string;
-  public numeric_code!: string | null;
-  public isd_code!: string | null;
-  public timezone!: string | null;
-  public is_imp!: boolean;
-  public group_name!: string | null;
-  public group_sortby!: number;
-  public sortby!: number;
+  declare id: number;
+  declare name: string;
+  declare iso2: string;
+  declare iso3: string;
+  declare numeric_code: string | null;
+  declare isd_code: string | null;
+  declare timezone: string | null;
+  declare is_imp: boolean;
+  declare group_name: string | null;
+  declare group_sortby: number;
+  declare sortby: number;
 }
 
 export default function (sequelize: Sequelize): typeof CountryLookupModel {

@@ -43,9 +43,12 @@ import { IAuthRequest, RoleType } from '@/modules/auth/auth.interfaces';
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
 
 export const authenticateJWT = (roles?: RoleType[]) => {
-  return (req: IAuthRequest, res: Response, next: NextFunction) => {
+  return (req: IAuthRequest, res: Response, next: NextFunction): void => {
     const authHeader = req.headers.authorization;
-    if (!authHeader) return res.status(401).json({ message: 'Unauthorized' });
+    if (!authHeader) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
+    }
 
     const token = authHeader.split(' ')[1];
     try {
@@ -53,9 +56,12 @@ export const authenticateJWT = (roles?: RoleType[]) => {
       req.account = { accountId: decoded.accountId, roles: [decoded.role], passwordHash: '', isActive: decoded.isActive };
       req.role = decoded.role;
 
-      if (roles && !roles.includes(decoded.role)) return res.status(403).json({ message: 'Forbidden' });
+      if (roles && !roles.includes(decoded.role)) {
+        res.status(403).json({ message: 'Forbidden' });
+        return;
+      }
       next();
-    } catch (err) {
+    } catch {
       res.status(401).json({ message: 'Invalid token' });
     }
   };

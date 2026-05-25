@@ -21,15 +21,15 @@ export class StateLookupModel
   extends Model<IStateLookup, StateLookupCreationAttributes>
   implements IStateLookup
 {
-  public id!: number;
-  public country_id!: number;
-  public name!: string;
-  public code!: string;
-  public iso_code!: string | null;
-  public latitude!: number | null;
-  public longitude!: number | null;
-  public timezone!: string | null;
-  public sortby!: number;
+  declare id: number;
+  declare country_id: number;
+  declare name: string;
+  declare code: string;
+  declare iso_code: string | null;
+  declare latitude: number | null;
+  declare longitude: number | null;
+  declare timezone: string | null;
+  declare sortby: number;
 }
 
 export default function (sequelize: Sequelize): typeof StateLookupModel {

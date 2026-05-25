@@ -20,17 +20,17 @@ export type AccountCreationAttributes = Optional<
 >;
 
 export class AccountModel extends Model<IAccount, AccountCreationAttributes> implements IAccount {
-  public accountId!: string;
+  declare accountId: string;
   public primaryEmail?: string;
   public primaryPhone?: string;
-  public passwordHash!: string;
+  declare passwordHash: string;
   public displayName?: string;
-  public isEmailVerified!: boolean;
-  public isPhoneVerified!: boolean;
-  public isActive!: boolean;
+  declare isEmailVerified: boolean;
+  declare isPhoneVerified: boolean;
+  declare isActive: boolean;
 
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
   public roles?: RoleType[];
 }
 

@@ -14,12 +14,12 @@ export interface IProfileLike {
 export type ProfileLikeCreationAttributes = Optional<IProfileLike, 'id' | 'status' | 'createdAt' | 'updatedAt'>;
 
 export class ProfileLikeModel extends Model<IProfileLike, ProfileLikeCreationAttributes> implements IProfileLike {
-  public id!: number;
-  public likerProfileId!: string;
-  public likedProfileId!: string;
-  public status!: ProfileLikeStatus;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  declare id: number;
+  declare likerProfileId: string;
+  declare likedProfileId: string;
+  declare status: ProfileLikeStatus;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 }
 
 export default function (sequelize: Sequelize): typeof ProfileLikeModel {
