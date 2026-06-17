@@ -16,6 +16,8 @@ export interface UserProfileResult {
   displayName: string;
   primaryEmail?: string;
   primaryPhone?: string;
+  email?: string;
+  phone?: string;
   profile?: InstanceType<typeof DB.profiles>;
 }
 
@@ -30,13 +32,27 @@ export const findById = async (accountId: string): Promise<UserProfileResult | n
 
   if (!account) return null;
 
-  const acc = account as any;
+  const acc = account.get({ plain: true }) as {
+    accountId?: string;
+    account_id?: string;
+    displayName?: string;
+    display_name?: string;
+    primaryEmail?: string | null;
+    primary_email?: string | null;
+    primaryPhone?: string | null;
+    primary_phone?: string | null;
+  };
+
+  const primaryEmail = acc.primaryEmail ?? acc.primary_email ?? undefined;
+  const primaryPhone = acc.primaryPhone ?? acc.primary_phone ?? undefined;
 
   return {
-    accountId: acc.accountId,
-    displayName: acc.displayName,
-    primaryEmail: acc.primaryEmail ?? undefined,
-    primaryPhone: acc.primaryPhone ?? undefined,
+    accountId: acc.accountId ?? acc.account_id ?? accountId,
+    displayName: acc.displayName ?? acc.display_name ?? '',
+    primaryEmail,
+    primaryPhone,
+    email: primaryEmail,
+    phone: primaryPhone,
     profile: profile ?? undefined,
   };
 };
@@ -132,12 +148,26 @@ export const listUsers = async (
 
   return {
     rows: rows.map((p) => {
-      const acc = (p as any).account;
+      const acc = ((p as any).account?.get?.({ plain: true }) ?? (p as any).account) as {
+        accountId?: string;
+        account_id?: string;
+        displayName?: string;
+        display_name?: string;
+        primaryEmail?: string | null;
+        primary_email?: string | null;
+        primaryPhone?: string | null;
+        primary_phone?: string | null;
+      };
+      const primaryEmail = acc.primaryEmail ?? acc.primary_email ?? undefined;
+      const primaryPhone = acc.primaryPhone ?? acc.primary_phone ?? undefined;
+
       return {
-        accountId: acc?.accountId,
-        displayName: acc?.displayName,
-        primaryEmail: acc?.primaryEmail ?? undefined,
-        primaryPhone: acc?.primaryPhone ?? undefined,
+        accountId: acc.accountId ?? acc.account_id ?? '',
+        displayName: acc.displayName ?? acc.display_name ?? '',
+        primaryEmail,
+        primaryPhone,
+        email: primaryEmail,
+        phone: primaryPhone,
         profile: p,
       };
     }),
@@ -151,10 +181,14 @@ export const listUsers = async (
 export const updateProfile = async (
   accountId: string,
   updates: UpdateUserProfileBody
-): Promise<void> => {
+): Promise<UserProfileResult> => {
   const profile = await DB.profiles.findOne({ where: { accountId } });
   if (!profile) throw Errors.notFound('Profile');
   await profile.update(updates as any);
+
+  const updated = await findById(accountId);
+  if (!updated) throw Errors.notFound('User');
+  return updated;
 };
 
 /**

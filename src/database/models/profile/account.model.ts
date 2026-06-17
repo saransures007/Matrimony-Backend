@@ -21,17 +21,17 @@ export type AccountCreationAttributes = Optional<
 
 export class AccountModel extends Model<IAccount, AccountCreationAttributes> implements IAccount {
   declare accountId: string;
-  public primaryEmail?: string;
-  public primaryPhone?: string;
+  declare primaryEmail?: string;
+  declare primaryPhone?: string;
   declare passwordHash: string;
-  public displayName?: string;
+  declare displayName?: string;
   declare isEmailVerified: boolean;
   declare isPhoneVerified: boolean;
   declare isActive: boolean;
 
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
-  public roles?: RoleType[];
+  declare roles?: RoleType[];
 }
 
 export default function (sequelize: Sequelize): typeof AccountModel {

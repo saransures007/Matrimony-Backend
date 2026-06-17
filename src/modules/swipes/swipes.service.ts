@@ -492,52 +492,74 @@ export const swipesService = {
       preferencesRow ? (preferencesRow.toJSON() as unknown as PreferenceRecord) : null,
     );
 
-    const where = await buildDiscoveryWhere(me, excludedIds, preferenceContext.where);
-    if (!where) {
+    const baseWhere = await buildDiscoveryWhere(me, excludedIds, preferenceContext.where);
+    if (!baseWhere) {
       return {
         data: [],
         nextCursor: null,
       };
     }
 
-    if (cursor) {
-      where.createdAt = { [Op.lt]: new Date(cursor) };
-    }
+    const batchSize = Math.max(limit * 4, 25);
+    const collected: Array<Record<string, unknown>> = [];
+    let searchCursor = cursor;
+    let nextCursor: string | null = null;
 
-    const totalAvailable = await DB.profiles.count({ where });
-
-    if (totalAvailable === 0) {
-      return {
-        data: [],
-        nextCursor: null,
+    while (collected.length < limit) {
+      const where: DiscoveryWhere = {
+        ...baseWhere,
+        ...(searchCursor ? { createdAt: { [Op.lt]: new Date(searchCursor) } } : {}),
       };
+
+      const profiles = await DB.profiles.findAll({
+        where,
+        order: [['created_at', 'DESC']],
+        limit: batchSize + 1,
+      });
+
+      if (profiles.length === 0) {
+        nextCursor = null;
+        break;
+      }
+
+      const hasMore = profiles.length > batchSize;
+      const page = profiles.slice(0, batchSize);
+      const items = await Promise.all(page.map(publicProfile));
+      const approvedItems = preferenceContext.requirePhoto
+        ? items.filter((item: any) => item.imageUrl != null)
+        : items;
+
+      collected.push(...approvedItems);
+
+      const lastRow = page[page.length - 1];
+      nextCursor = lastRow?.createdAt?.toISOString() ?? null;
+
+      if (!hasMore || !nextCursor) {
+        if (!hasMore) {
+          nextCursor = null;
+        }
+        break;
+      }
+
+      searchCursor = nextCursor;
     }
 
-    const profiles = await DB.profiles.findAll({
-      where,
-      order: [['created_at', 'DESC']],
-      limit: limit + 1,
-    });
+    const data = collected.slice(0, limit);
 
-    const hasMore = profiles.length > limit;
-    const page = profiles.slice(0, limit);
-    const items = await Promise.all(page.map(publicProfile));
-    const approvedItems = preferenceContext.requirePhoto
-      ? items.filter((item: any) => item.imageUrl != null)
-      : items;
-
-    const nextCursor = hasMore ? page[page.length - 1]?.createdAt?.toISOString() ?? null : null;
+    if (data.length < limit) {
+      nextCursor = null;
+    }
 
     return {
-      data: approvedItems,
+      data,
       nextCursor,
       ...(process.env.NODE_ENV === 'development' && {
         debug: {
-          totalAvailable,
+          totalAvailable: collected.length,
           swipedCount: seenRows.length,
           blockedCount: blockedIds.length,
-          profilesWithImages: items.filter((item: any) => item.imageUrl != null).length,
-          profilesWithoutImages: items.filter((item: any) => item.imageUrl == null).length,
+          profilesWithImages: collected.filter((item: any) => item.imageUrl != null).length,
+          profilesWithoutImages: collected.filter((item: any) => item.imageUrl == null).length,
         },
       }),
     };

@@ -143,11 +143,17 @@ const startServer = async () => {
     // Start HTTP server
     server = http.createServer(app);
     await initRealtime(server);
-
-    server.listen(PORT, () => {
-      logger.info({ port: PORT, env: NODE_ENV, type: 'server_start' }, `Server running at http://localhost:${PORT}`);
-      logger.info(`API Docs available at http://localhost:${PORT}/api-docs`);
+    server.listen(Number(PORT), '0.0.0.0', () => {
+      logger.info(
+        { port: PORT, env: NODE_ENV, type: 'server_start' },
+        `Server running at http://192.168.29.160:${PORT}`
+      );
     });
+
+    // server.listen(PORT, () => {
+    //   logger.info({ port: PORT, env: NODE_ENV, type: 'server_start' }, `Server running at http://localhost:${PORT}`);
+    //   logger.info(`API Docs available at http://localhost:${PORT}/api-docs`);
+    // });
   } catch (err) {
     logger.error({ err, type: 'startup_failure' }, 'Failed to start server');
     process.exit(1);

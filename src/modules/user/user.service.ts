@@ -31,9 +31,12 @@ export const userService = {
 
   /**
    * Get the authenticated user's own profile
+   * Bypasses cache so contact fields reflect the latest account row
    */
   getMyProfile: async (accountId: string): Promise<UserProfileResult> => {
-    return userService.getProfile(accountId);
+    const profile = await userRepo.findById(accountId);
+    if (!profile) throw Errors.notFound('User');
+    return profile;
   },
 
   /**
@@ -63,13 +66,14 @@ export const userService = {
   updateProfile: async (
     accountId: string,
     updates: UpdateUserProfileBody
-  ): Promise<void> => {
-    await userRepo.updateProfile(accountId, updates);
+  ): Promise<UserProfileResult> => {
+    const updated = await userRepo.updateProfile(accountId, updates);
 
     // Invalidate cached profile
     await invalidateKey(CacheKeys.userProfile(accountId));
 
     logger.info({ accountId, type: 'profile_update', fields: Object.keys(updates) });
+    return updated;
   },
 
   /**

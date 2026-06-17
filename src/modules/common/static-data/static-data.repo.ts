@@ -50,6 +50,7 @@ const toStringId = (value: unknown): string => {
   return value.toString();
 };
 
+
 // Implement repo
 export const repo: IStaticDataRepo = {
   getMotherTongues: async () => {
@@ -139,7 +140,9 @@ export const repo: IStaticDataRepo = {
   },
 
   getIncomeRanges: async () => {
-    const data = await DB.salary_range_lookup.findAll();
+    const data = await DB.salary_range_lookup.findAll({
+      order: [['sortby', 'ASC']],
+    });
     return data.map((row: any) => ({
       id: row.id?.toString() ?? '',
       label: row.label ?? '',

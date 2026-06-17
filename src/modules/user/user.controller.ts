@@ -83,11 +83,12 @@ export const updateProfile = asyncWrapper(
       return;
     }
 
-    await userService.updateProfile(id, updates);
+    const profile = await userService.updateProfile(id, updates);
 
     res.status(200).json({
       success: true,
       message: 'Profile updated successfully',
+      data: profile,
     });
   }
 );

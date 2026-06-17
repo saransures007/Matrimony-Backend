@@ -26,6 +26,7 @@ export const updateUserProfileParamsSchema = z.object({
 
 export const updateUserProfileBodySchema = z.object({
   fullname: z.string().min(1).max(100).optional(),
+  profileCreatedFor: z.string().min(1).max(100).optional(),
   bio: z.string().max(2000).optional(),
   dateOfBirth: z.string().datetime().pipe(z.coerce.date()).optional(),
   maritalStatus: z.enum(['Single', 'Divorced', 'Separated', 'Widowed']).optional(),

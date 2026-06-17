@@ -246,12 +246,12 @@ export const authService = {
       console.log("sending otp..")
       
       // Send SMS via Twilio
-      const { sendOtpSms } = await import('../../middlewares/otp.service.js');
-      if (process.env.NODE_ENV === "development") {
-        console.log(`OTP for ${phoneNumber}: ${otp}`);
-      } else {
-        await sendOtpSms(phoneNumber, otp);
-      }
+      // const { sendOtpSms } = await import('../../middlewares/otp.service.js');
+      // if (process.env.NODE_ENV === "development") {
+      //   console.log(`OTP for ${phoneNumber}: ${otp}`);
+      // } else {
+      //   await sendOtpSms(phoneNumber, otp);
+      // }
       
       return { message: 'OTP sent successfully', expiresAt };
 } catch (err: any) {
